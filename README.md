@@ -2,6 +2,22 @@
 
 A real-time speech translation app that captures spoken audio, transcribes it via the browser's Web Speech API, and instantly translates it using Google Cloud Translate — displayed in a live, side-by-side caption view.
 
+## Screenshots
+
+![Landing page](.github/assets/landing.png)
+
+<details>
+<summary>Language selection</summary>
+
+![Select source language](.github/assets/language-select-from.png)
+![Select target language](.github/assets/language-select-to.png)
+
+</details>
+
+![Live translation](.github/assets/live-translation.png)
+
+![Session history](.github/assets/sessions.png)
+
 ## Features
 
 - **Live speech recognition** — continuous transcription with interim results
