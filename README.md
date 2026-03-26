@@ -1,73 +1,115 @@
-# React + TypeScript + Vite
+# Cursor Translate
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time speech translation app that captures spoken audio, transcribes it via the browser's Web Speech API, and instantly translates it using Google Cloud Translate — displayed in a live, side-by-side caption view.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Live speech recognition** — continuous transcription with interim results
+- **Instant translation** — debounced preview as you speak, final translation on phrase completion
+- **9 supported languages** — English, Spanish, French, German, Portuguese, Italian, Chinese, Japanese, Korean
+- **Side-by-side captions** — split-panel view with fade animations and auto-scroll
+- **Session history** — save, view, and delete past translation sessions
+- **Dark-themed UI** — minimal, distraction-free interface
 
-## React Compiler
+> Speech recognition works best in **Chrome** or **Edge**.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Prerequisites
 
-## Expanding the ESLint configuration
+- [Node.js](https://nodejs.org/) v18+
+- A [Google Cloud Translate API key](https://console.cloud.google.com/apis/library/translate.googleapis.com)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Setup
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 1. Clone the repository
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/diego-cum-telus/translations-app.git
+cd translations-app
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Install dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
+
+### 3. Configure environment variables
+
+Create a `.env` file in the project root:
+
+```bash
+cp .env.example .env
+```
+
+Then open `.env` and add your key:
+
+```env
+GOOGLE_TRANSLATE_API_KEY=your-google-translate-api-key-here
+```
+
+To get a key:
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable the **Cloud Translation API**
+3. Create an API key under **APIs & Services → Credentials**
+
+### 4. Start the development server
+
+```bash
+npm run dev
+```
+
+This starts both the frontend and backend concurrently:
+
+| Service  | URL                          |
+|----------|------------------------------|
+| Frontend | http://localhost:5173        |
+| API      | http://localhost:3001        |
+
+## Scripts
+
+| Command         | Description                              |
+|-----------------|------------------------------------------|
+| `npm run dev`   | Run frontend + backend in parallel       |
+| `npm run build` | Type-check and build for production      |
+| `npm run lint`  | Run ESLint                               |
+| `npm run preview` | Preview the production build           |
+
+## Tech Stack
+
+| Layer       | Technology                          |
+|-------------|-------------------------------------|
+| Frontend    | React 19, TypeScript, Vite, Tailwind CSS 4, React Router 7 |
+| Backend     | Express 5, Google Cloud Translate v2 |
+| Speech      | Web Speech API (browser-native)     |
+| Persistence | File-based JSON (`data/sessions.json`) |
+
+## Project Structure
+
+```
+translations-app/
+├── server/
+│   ├── index.ts               # Express server entry
+│   └── routes/
+│       ├── translate.ts       # POST /api/translate
+│       └── sessions.ts        # GET/POST/DELETE /api/sessions
+├── src/
+│   ├── components/
+│   │   └── CaptionPanel.tsx   # Live caption display
+│   ├── hooks/
+│   │   └── useSpeechRecognition.ts
+│   ├── pages/
+│   │   ├── TranslatePage.tsx  # Main translation view
+│   │   └── SessionsPage.tsx   # Session history
+│   └── main.tsx
+├── public/
+├── .env                       # Not committed — add your own
+└── package.json
+```
+
+## Environment Variables
+
+| Variable                   | Required | Description                     |
+|----------------------------|----------|---------------------------------|
+| `GOOGLE_TRANSLATE_API_KEY` | Yes      | Google Cloud Translation API v2 key |
+
+If the key is missing, the server returns a `503` and translations will display a placeholder message.
